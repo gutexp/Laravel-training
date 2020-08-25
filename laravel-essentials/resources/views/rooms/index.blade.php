@@ -17,7 +17,8 @@
         @foreach($rooms as $room)
             <tr>
                 <td>{{ $room->number }}</td>
-                <td>{{ $room->room_type_id }}</td>
+                <td>{{ $room->roomType->name }}</td>
+                {{-- Above gonna add the name of the room instead the number related to it this is caused by the relationship --}}
             </tr>
         @endforeach
     </tbody>

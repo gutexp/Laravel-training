@@ -21,11 +21,7 @@ class ShowRoomsController extends Controller
         //     $rooms = $rooms->where('room_type_id', $request->query('id'));
         // }
         
-        if (isset($roomType)) { //with this we can return the type of the room just by adding a /number 
-            $rooms = Room::where('room_type_id', $roomType)->get();
-        }else{
-            $rooms = Room::get();
-        }
+        $rooms = Room::byType($roomType)->get();
 
         // return response()->json($rooms);    //this gonna pass the response of the search in the DB by a json format of the response which is better to show this up
         return view('rooms.index', ['rooms' => $rooms]);

@@ -16,7 +16,7 @@ class BookingController extends Controller
     public function index()
     {
         // Booking::withTrashed()->get()->dd();    //we can check the softdeleted datas and the remaning datas with this command of dump
-        $bookings = Booking::paginate(1);   //with paginate you can pass as parameter how many results do you want to be shown at the booking index page
+        $bookings = Booking::with(['room.roomType', 'users:name'])->paginate(1);   //with paginate you can pass as parameter how many results do you want to be shown at the booking index page
         return view('bookings.index')
             ->with('bookings', $bookings);
     }
@@ -57,10 +57,15 @@ class BookingController extends Controller
         //all of the above code can be replaced by this thanks to our model
         $booking = Booking::create($request->input());
 
-        DB::table('bookings_users')->insert([
-            'booking_id' => $booking->id,
-            'user_id' => $request->input('user_id'),
-        ]);
+        // DB::table('bookings_users')->insert([
+        //     'booking_id' => $booking->id,
+        //     'user_id' => $request->input('user_id'),
+        // ]);
+
+        $booking->users()->attach($request->input('user_id'));  //with this we are saving the relationship and substitutes above code
+
+        // $user = $booking->users()->create(['name' => 'test']);
+
         return redirect()->action('BookingController@index');   //sends the user back to the index of this page of bookings
     }
 
@@ -118,11 +123,14 @@ class BookingController extends Controller
         $booking->fill($request->input());
         $booking->save();
 
-        DB::table('bookings_users')
-            ->where('booking_id', $booking->id)
-            ->update([
-                'user_id' => $request->input('user_id'),
-        ]);
+        // DB::table('bookings_users')
+        //     ->where('booking_id', $booking->id)
+        //     ->update([
+        //         'user_id' => $request->input('user_id'),
+        // ]);
+
+        $booking->users()->sync([$request->input('user_id')]);  //saving again the relationship and substitute the code from above
+
         return redirect()->action('BookingController@index');
     }
 
@@ -134,7 +142,9 @@ class BookingController extends Controller
      */
     public function destroy(Booking $booking)
     {
-        DB::table('bookings_users')->where('booking_id', $booking->id)->delete();
+        // DB::table('bookings_users')->where('booking_id', $booking->id)->delete();
+
+        $booking->users()->detach();
 
         // DB::table('bookings')->where('id', $booking->id)->delete();
         $booking->delete();
