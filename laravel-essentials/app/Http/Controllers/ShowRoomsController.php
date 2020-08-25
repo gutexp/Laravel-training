@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,11 +14,17 @@ class ShowRoomsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, $roomType = null)
     {
-        $rooms = DB::table('rooms')->get(); //this gonna return to variable rooms everything that we have in this table through a foreach kind of method
-        if($request->query('id') !== null){ //this will give us the chance, if we want, to search the room by id's
-            $rooms = $rooms->where('room_type_id', $request->query('id'));
+        // $rooms = Room::get(); //this gonna return to variable rooms everything that we have in this table through a foreach kind of method
+        // if($request->query('id') !== null){ //this will give us the chance, if we want, to search the room by id's
+        //     $rooms = $rooms->where('room_type_id', $request->query('id'));
+        // }
+        
+        if (isset($roomType)) { //with this we can return the type of the room just by adding a /number 
+            $rooms = Room::where('room_type_id', $roomType)->get();
+        }else{
+            $rooms = Room::get();
         }
 
         // return response()->json($rooms);    //this gonna pass the response of the search in the DB by a json format of the response which is better to show this up

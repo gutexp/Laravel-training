@@ -23,7 +23,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // Route::get('/test', function(){ return "Goodbye"; });
 
-Route::get('/rooms', 'ShowRoomsController');    //we are invoking our new controller that we created in the command line
+Route::get('/rooms/{roomType?}', 'ShowRoomsController');    //we are invoking our new controller that we created in the command line
 
 // Route::get('/bookings', 'BookingController@index');
 
